@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=Obsidian
+Exec=/usr/bin/rundian.sh
+Terminal=false
+Type=Application
+Icon=obsidian
+StartupWMClass=nativian
+Comment=Nativian to run obsidian with native window frame
+MimeType=x-scheme-handler/obsidian;
+Categories=Office;
+
