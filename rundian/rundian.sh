@@ -69,6 +69,11 @@ choose_version () {
 	fi
 }
 
+# run nativian and ignore app package from obsidian
+run_nativian () {
+	rm ~/.config/obsidian/obsidian*asar
+	$1
+}
 
 
 # check if obsidian installed
@@ -85,12 +90,12 @@ if [[ ! $# -eq 0 && ($1 == "-s" || $1 == "--select-version") ]]; then
 	download_obsidian $choosen_version
 	appImage=`ls ~/.local/share/nativian/Obsidian*AppImage`
 	enable_frame "$appImage"
-	"$appImage"
+	run_nativian "$appImage"
 else
 	if [[ -f "$appImage" ]]; then
 		current_version=`echo $appImage | grep -o -P '(?<=Obsidian-)[0-9]{0,2}\.[0-9]{0,2}\.[0-9]{0,2}'`
 		if [[ $current_version == $latest_release_version || `printf "$latest_release_version\n$current_version" | sort -V | tail -1` == $current_version ]]; then
-			"$appImage"
+			run_nativian "$appImage"
 		else
 			if zenity --question --title="Obsidian $latest_release_version" --text="A new version of Obsidian ($latest_release_version) is available!\nDo you want to upgrade now?" --no-wrap --icon-name=obsidian --width=200 --height=100
 	    		then
@@ -98,8 +103,14 @@ else
 	    			download_obsidian "$latest_release_url"
 	    			appImage=`ls ~/.local/share/nativian/Obsidian*AppImage`
 	    			enable_frame "$appImage"
+			else
+				if zenity --question --title="Obsidian $latest_release_version" --text="Skip version $latest_release_version?" --no-wrap --icon-name=obsidian --width=200 --height=100
+					then
+						mv $(ls ~/.local/share/nativian/Obsidian*AppImage) ~/.local/share/nativian/Obsidian-"$latest_release_version".AppImage
+						appImage=`ls ~/.local/share/nativian/Obsidian*AppImage`
+				fi
 			fi
-			"$appImage"
+			run_nativian "$appImage"
 		fi
 	else
 		if zenity --question --title="Nativian not found" --text="It seems that nativian is not installed.\nWant to install it?" --no-wrap --icon-name=obsidian --width=200 --height=100
@@ -109,7 +120,7 @@ else
 			download_obsidian "$latest_release_url"
 			appImage=`ls ~/.local/share/nativian/Obsidian*AppImage`
 			enable_frame "$appImage"
-			"$appImage"
+			run_nativian "$appImage"
 		fi
 		exit 0
 	fi
