@@ -115,8 +115,6 @@ else
 	else
 		if zenity --question --title="Nativian not found" --text="It seems that nativian is not installed.\nWant to install it?" --no-wrap --icon-name=obsidian --width=200 --height=100
 		then
-			myname=`whoami`
-			notify-send "$myname"
 			download_obsidian "$latest_release_url"
 			appImage=`ls ~/.local/share/nativian/Obsidian*AppImage`
 			enable_frame "$appImage"
