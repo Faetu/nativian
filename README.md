@@ -49,7 +49,7 @@ rm /usr/share/applications/obsidian.desktop
 - [x] distinguish between x86 and arm64
 - [x] check for updates
 - [x] version chooser
-- [ ] skip version functionality (until a newer release)
+- [x] skip version functionality (until a newer release)
 
 ## Known issues
 - [ ] TWIN-FRAME: On `vault chooser` the electron frame stills shows up
