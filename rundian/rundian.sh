@@ -61,8 +61,12 @@ choose_version () {
 		version_only=`echo "${arr_release_list[$idx]}" | grep -o -P '(?<=Obsidian-)[0-9]{0,2}\.[0-9]{0,2}\.[0-9]{0,2}'`
 		version_dialog_list="$version_dialog_list $idx $version_only"
 	done
-	dialog=`zenity --list --hide-header $version_dialog_list --column "index" --column "version" --hide-column=1 --print-column=1`
-	echo "${arr_release_list[$dialog]}"
+	dialog=`zenity --list --title="Choose Obsidian release" --ok-label "Install" --cancel-label "Cancel" --hide-header $version_dialog_list --column "index" --column "version" --hide-column=1 --print-column=1 --width=200 --height=300`
+	if [[ "$dialog" -ge 1 ]]; then
+		echo "${arr_release_list[$dialog]}"
+	else
+		echo "$dialog"
+	fi
 }
 
 
@@ -72,6 +76,9 @@ appImage=`ls ~/.local/share/nativian/Obsidian*AppImage`
 
 if [[ ! $# -eq 0 && ($1 == "-s" || $1 == "--select-version") ]]; then
 	choosen_version=$(choose_version)
+	if [[ "$choosen_version" -eq 0 ]]; then
+		exit 0
+	fi
 	if [[ -f "$appImage" ]]; then
 		rm "$appImage"
 	fi
@@ -85,7 +92,7 @@ else
 		if [[ $current_version == $latest_release_version || `printf "$latest_release_version\n$current_version" | sort -V | tail -1` == $current_version ]]; then
 			"$appImage"
 		else
-			if zenity --question --title="Obsidian $latest_release_version" --text="A new version of Obsidian ($latest_release_version) is available!\nDo you want to upgrade now?" --no-wrap --icon-name=obsidian --width=500 --width=200
+			if zenity --question --title="Obsidian $latest_release_version" --text="A new version of Obsidian ($latest_release_version) is available!\nDo you want to upgrade now?" --no-wrap --icon-name=obsidian --width=200 --height=100
 	    		then
 	    			rm "$appImage"
 	    			download_obsidian "$latest_release_url"
@@ -95,7 +102,7 @@ else
 			"$appImage"
 		fi
 	else
-		if zenity --question --title="Nativian not found" --text="It seems that nativian is not installed.\nWant to install it?" --no-wrap --icon-name=obsidian --width=500 --width=200
+		if zenity --question --title="Nativian not found" --text="It seems that nativian is not installed.\nWant to install it?" --no-wrap --icon-name=obsidian --width=200 --height=100
 		then
 			myname=`whoami`
 			notify-send "$myname"
