@@ -19,3 +19,11 @@
 
 # End of https://www.toptal.com/developers/gitignore/api/linux
 
+# Created by https://www.toptal.com/developers/gitignore/api/kdevelop4
+# Edit at https://www.toptal.com/developers/gitignore?templates=kdevelop4
+
+### KDevelop4 ###
+*.kdev4
+.kdev4/
+
+# End of https://www.toptal.com/developers/gitignore/api/kdevelop4
