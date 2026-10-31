@@ -5,6 +5,8 @@ Nativian is a shell script which downloads obsidian appimage and automates all t
 > Screenshot of obsidian on gnome 42
 
 ## Installation
+> it is recommended to remove a previously installed Obsidian
+
 To install `Nativian` do the following:
 ```bash
 git clone git@github.com:Faetu/nativian.git
@@ -12,6 +14,11 @@ cd ./nativian
 sudo bash ./installer.sh
 ```
 Only the installer need to be run as root!
+
+### Requirements
+- npx with asar
+- appimagetools
+
 ## Remove
 To remove nativian, just rerun `installer.sh` as root like on installation step.
 Or you could remove it manually:
@@ -36,3 +43,4 @@ rm /usr/share/applications/obsidian.desktop
 ## Known issues
 - [ ] TWIN-FRAME: On `vault chooser` the electron frame stills shows up
 ![dp_frame](screenshots/twin_frame.png)
+
