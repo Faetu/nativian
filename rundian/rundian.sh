@@ -1,9 +1,5 @@
 #!/bin/bash
 
-# releases: https://github.com/obsidianmd/obsidian-releases/releases/download/v0.14.2/Obsidian-0.14.2.AppImage
-# api for json format:
-# https://github.com/obsidianmd/obsidian-releases/releases/download/v0.14.2/Obsidian-0.14.2.AppImage
-
 all_releases="https://api.github.com/repos/obsidianmd/obsidian-releases/releases"
 
 
@@ -16,9 +12,9 @@ fi
 release_list=`curl -Lis $all_releases | grep -o -P $regex`
 
 # get release list
-IFS=$'\n' read -rd '' -a mylist <<< "$release_list"
+IFS=$'\n' read -rd '' -a arr_release_list <<< "$release_list"
 # get latest release for the architecture
-latest_release_url=${mylist[0]}
+latest_release_url=${arr_release_list[0]}
 latest_release_version=`echo $latest_release_url | grep -o -P '(?<=download\/v).*(?=\/Obsidian)'`
 
 # download specific release to ~/.local/share/nativian
@@ -47,6 +43,7 @@ enable_frame () {
 	echo "# pack asar again"
 	echo 80
 	npx asar pack ./squashfs-root/resources/obsidian.asar.extracted ./squashfs-root/resources/obsidian.asar
+	rm ~/.config/obsidian/obsidian-*.asar
 	echo "# create new appimage"
 	echo 99
 	rm "$1"
@@ -56,35 +53,57 @@ enable_frame () {
 	echo "build it to $1"
 }
 
+# ask for specific release version to install
+choose_version () {
+	version_dialog_list=""
+	for idx in "${!arr_release_list[@]}"
+	do
+		version_only=`echo "${arr_release_list[$idx]}" | grep -o -P '(?<=Obsidian-)[0-9]{0,2}\.[0-9]{0,2}\.[0-9]{0,2}'`
+		version_dialog_list="$version_dialog_list $idx $version_only"
+	done
+	dialog=`zenity --list --hide-header $version_dialog_list --column "index" --column "version" --hide-column=1 --print-column=1`
+	echo "${arr_release_list[$dialog]}"
+}
+
 
 
 # check if obsidian installed
 appImage=`ls ~/.local/share/nativian/Obsidian*AppImage`
-if [[ -f "$appImage" ]]; then
-	current_version=`echo $appImage | grep -o -P '(?<=Obsidian-).*(?=\.AppImage)'`
-	if [[ $current_version == $latest_release_version || `printf "$latest_release_version\n$current_version" | sort -V | tail -1` == $current_version ]]; then
-		"$appImage"
-	else
-		if zenity --question --title="Obsidian $latest_release_version" --text="A new version of Obsidian ($latest_release_version) is available!\nDo you want to upgrade now?" --no-wrap --icon-name=obsidian --width=500 --width=200
-    		then
-    			rm "$appImage"
-    			download_obsidian "$latest_release_url"
-    			appImage=`ls ~/.local/share/nativian/Obsidian*AppImage`
-    			enable_frame "$appImage"
-		fi
-		"$appImage"
+
+if [[ ! $# -eq 0 && ($1 == "-s" || $1 == "--select-version") ]]; then
+	choosen_version=$(choose_version)
+	if [[ -f "$appImage" ]]; then
+		rm "$appImage"
 	fi
+	download_obsidian $choosen_version
+	appImage=`ls ~/.local/share/nativian/Obsidian*AppImage`
+	enable_frame "$appImage"
+	"$appImage"
 else
-	if zenity --question --title="Nativian not found" --text="It seems that nativian is not installed.\nWant to install it?" --no-wrap --icon-name=obsidian --width=500 --width=200
-	then
-		myname=`whoami`
-		notify-send "$myname"
-		download_obsidian "$latest_release_url"
-		appImage=`ls ~/.local/share/nativian/Obsidian*AppImage`
-		enable_frame "$appImage"
-		"$appImage"
+	if [[ -f "$appImage" ]]; then
+		current_version=`echo $appImage | grep -o -P '(?<=Obsidian-)[0-9]{0,2}\.[0-9]{0,2}\.[0-9]{0,2}'`
+		if [[ $current_version == $latest_release_version || `printf "$latest_release_version\n$current_version" | sort -V | tail -1` == $current_version ]]; then
+			"$appImage"
+		else
+			if zenity --question --title="Obsidian $latest_release_version" --text="A new version of Obsidian ($latest_release_version) is available!\nDo you want to upgrade now?" --no-wrap --icon-name=obsidian --width=500 --width=200
+	    		then
+	    			rm "$appImage"
+	    			download_obsidian "$latest_release_url"
+	    			appImage=`ls ~/.local/share/nativian/Obsidian*AppImage`
+	    			enable_frame "$appImage"
+			fi
+			"$appImage"
+		fi
+	else
+		if zenity --question --title="Nativian not found" --text="It seems that nativian is not installed.\nWant to install it?" --no-wrap --icon-name=obsidian --width=500 --width=200
+		then
+			myname=`whoami`
+			notify-send "$myname"
+			download_obsidian "$latest_release_url"
+			appImage=`ls ~/.local/share/nativian/Obsidian*AppImage`
+			enable_frame "$appImage"
+			"$appImage"
+		fi
+		exit 0
 	fi
-	exit 0
 fi
-
-

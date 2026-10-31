@@ -1,8 +1,5 @@
 #!/bin/sh
 
-
-
-
 install_nativian () {
 	rm -rf "/home/$1/.local/share/nativian"
 	mkdir "/home/$1/.local/share/nativian"
