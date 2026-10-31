@@ -19,6 +19,16 @@ Only the installer need to be run as root!
 - npx with asar
 - appimagetools
 
+## Use
+
+This script creates a `obsidian.desktop` file. You could start obsidian like you do it before (with menu/ulauncher/albert)
+If you want to use the `version chooser` function, you have to run `rundian.sh` script on the terminal:
+```bash
+/usr/bin/rundian.sh -s
+```
+This will show the following window:
+![version_chooser](screenshots/version_chooser.png)
+
 ## Remove
 To remove nativian, just rerun `installer.sh` as root like on installation step.
 Or you could remove it manually:
