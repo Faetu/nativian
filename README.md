@@ -1,5 +1,18 @@
 # Nativian
 
+> :warning: **Obsidian supports native frames**
+> 
+> Since version 1.0 the developer of obsidian had changed the code from `frame: true` to
+> a dynamic `frame: windowframe` which can be changed from the settings, to use the ugly(obsidian frame)
+> or the native frame.
+>
+> With this change, my script is useless and will not be maintained anymore!
+
+
+
+---
+
+
 Nativian is a shell script which downloads obsidian appimage and automates all the steps necessary to change the frame attribute to true.
 ![Screenshot](screenshots/comparsion.png)
 > Screenshot of obsidian on gnome 42
