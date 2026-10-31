@@ -27,6 +27,7 @@ If you want to use the `version chooser` function, you have to run `rundian.sh` 
 /usr/bin/rundian.sh -s
 ```
 This will show the following window:
+
 ![version_chooser](screenshots/version_chooser.png)
 
 ## Remove
